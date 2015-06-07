@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.SphericalUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -282,13 +283,15 @@ public class MainActivity
             myLocationMarker.setSnippet("" + mCurrentLocation.getLatitude() + " / " + mCurrentLocation.getLongitude() + "\n" +
                             getTimeZoneLocation() + "\n" +
                             "UTC Time " + getUTCtime() + "\n" +
-                            "Local Time "+getLocalTime() + "\n" +
+                            "Local Time " + getLocalTime() + "\n" +
+                            "Local Time2 " + getLocalTime() + "\n" +
                             "Time to Eroad " + getTimeDistance(mCurrentLocation, eroad)
 //                getAddress(mCurrentLocation)
             );
             Log.i("", "Zone:" + getTimeZoneLocation());
             Log.i("", "UTC:" + getUTCtime());
             Log.i("", "LocalTime:" + getLocalTime());
+            Log.i("", "Time from Eroad:" + getTimeDistance(mCurrentLocation, eroad));
             Log.i("", "Local:" + getAddress(mCurrentLocation));
 
             Marker eroadMarker = map.addMarker(new MarkerOptions()
@@ -301,10 +304,15 @@ public class MainActivity
 
     public static int TIME_PER_METER_SECONDS_EST = 2;
 
-    private Integer getTimeDistance(Location location1, Location location2) {
+    private String getTimeDistance(Location location1, Location location2) {
         Float distanceInMeters;
         distanceInMeters = location1.distanceTo(location2);
-        return distanceInMeters.intValue() / TIME_PER_METER_SECONDS_EST;
+
+
+        Log.i("", "XTime from Eroad:" + (distanceInMeters.intValue()/ TIME_PER_METER_SECONDS_EST)/60);//SphericalUtil.computeDistanceBetween(new LatLng(location1.getLatitude(), location1.getLongitude()), new LatLng(location2.getLatitude(), location2.getLongitude())));
+        Log.i("", "XTime from Eroad:" + distanceInMeters.intValue()/ TIME_PER_METER_SECONDS_EST);
+
+        return new SimpleDateFormat("HH:mm:ss").format(new Date(0).getTime() + (distanceInMeters.intValue() / TIME_PER_METER_SECONDS_EST));
     }
 
     protected void stopLocationUpdates() {
